@@ -1,5 +1,7 @@
 # Antigravity Discord RPC
 
+> **Note**: This extension is specifically designed for [Antigravity](https://antigravity.dev), an AI-powered coding assistant. It will not work with standard VS Code.
+
 Dynamic Discord Rich Presence integration for Antigravity that displays real-time agent activity across all conversations.
 
 ## Features

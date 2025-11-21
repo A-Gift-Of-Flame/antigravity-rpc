@@ -2,6 +2,16 @@
 
 All notable changes to the Antigravity Discord RPC extension will be documented in this file.
 
+## [0.0.6] - 2025-11-21
+
+### Added
+- Gallery banner with Antigravity-themed dark colors
+- Explicit note in README that this is Antigravity-specific
+
+### Changed
+- Improved description to emphasize "Antigravity" and "AI agent" functionality
+- Updated README to clarify platform requirements
+
 ## [0.0.5] - 2025-11-21
 
 ### Added
