@@ -1,0 +1,47 @@
+{
+    "name": "antigravity-rpc",
+    "displayName": "Antigravity Discord RPC",
+    "publisher": "antigravity",
+    "description": "Dynamic Discord Rich Presence that shows real-time agent activity across all conversations",
+    "version": "0.0.2",
+    "icon": "icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/A-Gift-Of-Flame/antigravity-rpc"
+    },
+    "bugs": {
+        "url": "https://github.com/A-Gift-Of-Flame/antigravity-rpc/issues"
+    },
+    "homepage": "https://github.com/A-Gift-Of-Flame/antigravity-rpc#readme",
+    "license": "MIT",
+    "keywords": [
+        "discord",
+        "rich presence",
+        "antigravity",
+        "rpc",
+        "status",
+        "activity"
+    ],
+    "engines": {
+        "vscode": "^1.90.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./extension.js",
+    "contributes": {},
+    "scripts": {
+        "package": "vsce package"
+    },
+    "dependencies": {
+        "discord-rpc": "^4.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^18.0.0",
+        "@types/vscode": "^1.90.0",
+        "@vscode/vsce": "^2.15.0"
+    }
+}
