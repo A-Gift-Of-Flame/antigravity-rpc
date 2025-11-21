@@ -3,7 +3,11 @@
     "displayName": "Antigravity Discord RPC",
     "publisher": "antigravity",
     "description": "Show your Antigravity AI agent activity in Discord with real-time status updates and persistent timer",
-    "version": "0.0.3",
+    "version": "0.0.5",
+    "author": {
+        "name": "A-Gift-Of-Flame",
+        "url": "https://github.com/A-Gift-Of-Flame"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/A-Gift-Of-Flame/antigravity-rpc"
