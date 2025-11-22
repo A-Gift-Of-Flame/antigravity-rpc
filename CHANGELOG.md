@@ -2,6 +2,18 @@
 
 All notable changes to the Antigravity Discord RPC extension will be documented in this file.
 
+## [0.0.8] - 2025-11-22
+
+### Changed
+- Improved status accuracy: now uses the nearest `## Section Header` for the task name instead of the file title
+- This ensures the status updates as you move through different sections of a task, even if the main title isn't updated
+
+## [0.0.7] - 2025-11-21
+
+### Fixed
+- Fixed issue where status would get "locked" to an old task indefinitely
+- Added 5-minute timeout: status now reverts to "Idle" if agent hasn't been active recently
+
 ## [0.0.6] - 2025-11-21
 
 ### Added

@@ -72,6 +72,7 @@ function findActiveConversation() {
         // Find the most recently modified task.md
         let mostRecentTime = 0;
         let mostRecentConversation = null;
+        const STALE_THRESHOLD = 5 * 60 * 1000; // 5 minutes
 
         conversationDirs.forEach(dir => {
             const taskFile = path.join(brainDir, dir, 'task.md');
@@ -85,6 +86,22 @@ function findActiveConversation() {
                 // task.md doesn't exist in this conversation, skip
             }
         });
+
+        // Check if the most recent activity is stale
+        if (Date.now() - mostRecentTime > STALE_THRESHOLD) {
+            if (currentConversationId !== null) {
+                // Clear status if we were tracking something
+                currentConversationId = null;
+                if (watchedTaskFile) {
+                    fs.unwatchFile(watchedTaskFile);
+                    watchedTaskFile = null;
+                }
+                agentStatus = '';
+                agentTaskName = '';
+                updateActivity();
+            }
+            return;
+        }
 
         if (mostRecentConversation && mostRecentConversation !== currentConversationId) {
             // Switch to new conversation
@@ -120,27 +137,32 @@ function checkStatusFile() {
             return;
         }
 
-        // Parse task.md for the first "In Progress" item
+        // Parse task.md sequentially to find the context of the active task
         const lines = data.split('\n');
         let activeTask = '';
         let taskName = '';
 
-        // Look for the task name (first # heading)
-        for (const line of lines) {
-            if (line.startsWith('# ')) {
-                taskName = line.substring(2).trim();
-                break;
-            }
-        }
+        let currentMainHeader = '';
+        let currentSectionHeader = '';
 
-        // Look for active task (first [/] item)
         for (const line of lines) {
-            if (line.includes('[/]')) {
-                // Extract text between ] and <!-- or end of line
-                const match = line.match(/\[\/\]\s*(.*?)(?:<!--|$)/);
+            const trimmedLine = line.trim();
+
+            if (trimmedLine.startsWith('# ')) {
+                currentMainHeader = trimmedLine.substring(2).trim();
+                // Reset section header when a new main header is found (though usually there's only one main header)
+                currentSectionHeader = '';
+            } else if (trimmedLine.startsWith('## ')) {
+                currentSectionHeader = trimmedLine.substring(3).trim();
+            } else if (trimmedLine.includes('[/]')) {
+                // Found the active task
+                const match = trimmedLine.match(/\[\/\]\s*(.*?)(?:<!--|$)/);
                 if (match && match[1]) {
                     activeTask = match[1].trim();
-                    break;
+
+                    // Use the most specific header available: Section > Main
+                    taskName = currentSectionHeader || currentMainHeader;
+                    break; // Stop after finding the first active task
                 }
             }
         }
@@ -227,6 +249,41 @@ function updateActivity() {
                 state = `Project: ${folder.name}`;
             }
         }
+    }
+
+    // Auto-detect install path
+    let outputDir;
+    const localAppData = process.env.LOCALAPPDATA;
+    if (localAppData) {
+        const potentialPath = path.join(localAppData, 'Programs', 'Antigravity', 'rpc_output');
+        // Check if parent Antigravity dir exists
+        if (fs.existsSync(path.dirname(potentialPath))) {
+            outputDir = potentialPath;
+        }
+    }
+
+    // Fallback if not found (e.g. non-standard install)
+    if (!outputDir) {
+        console.warn('Antigravity install not found in standard location. Using temp dir.');
+        outputDir = path.join(os.tmpdir(), 'antigravity_rpc_output');
+    }
+
+    try {
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
+    } catch (e) {
+        console.error('Error creating output directory:', e);
+    }
+
+    // Write to text files for OBS/Streaming
+    try {
+        fs.writeFileSync(path.join(outputDir, 'details.txt'), details || '');
+        fs.writeFileSync(path.join(outputDir, 'state.txt'), state || '');
+        fs.writeFileSync(path.join(outputDir, 'status.txt'), agentStatus || '');
+        fs.writeFileSync(path.join(outputDir, 'task.txt'), agentTaskName || '');
+    } catch (e) {
+        console.error('Error writing RPC text files:', e);
     }
 
     client.setActivity({
