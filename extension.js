@@ -3,9 +3,10 @@ const RPC = require('discord-rpc');
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const clientId = '1440730997460172810';
-const brainDir = 'C:/Users/Mauro/.gemini/antigravity/brain';
+const brainDir = path.join(os.homedir(), '.gemini', 'antigravity', 'brain');
 let client;
 let statusBarItem;
 let agentStatus = '';

@@ -2,6 +2,12 @@
 
 All notable changes to the Antigravity Discord RPC extension will be documented in this file.
 
+## [0.0.10] - 2025-11-22
+
+### Fixed
+- CRITICAL: Fixed hardcoded user path. Now dynamically resolves the user's home directory using `os.homedir()`.
+- Extension now works correctly for all users, not just the developer.
+
 ## [0.0.9] - 2025-11-22
 
 ### Changed
