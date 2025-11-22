@@ -3,7 +3,7 @@
     "displayName": "Antigravity Discord RPC",
     "publisher": "antigravity",
     "description": "Discord Rich Presence integration for Antigravity - Display your AI agent's real-time activity and tasks",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "author": {
         "name": "A-Gift-Of-Flame",
         "url": "https://github.com/A-Gift-Of-Flame"

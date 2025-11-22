@@ -2,6 +2,11 @@
 
 All notable changes to the Antigravity Discord RPC extension will be documented in this file.
 
+## [0.0.9] - 2025-11-22
+
+### Changed
+- Adjusted conversation polling interval from 2s to 3.33s to optimize performance
+
 ## [0.0.8] - 2025-11-22
 
 ### Changed
