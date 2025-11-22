@@ -2,6 +2,12 @@
 
 All notable changes to the Antigravity Discord RPC extension will be documented in this file.
 
+## [0.0.11] - 2025-11-22
+
+### Changed
+- **Internal**: Migrated codebase from JavaScript to TypeScript for better stability and type safety.
+- Preserved all existing functionality including the critical path fix and smart header parsing.
+
 ## [0.0.10] - 2025-11-22
 
 ### Fixed

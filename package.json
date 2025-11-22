@@ -3,7 +3,7 @@
     "displayName": "Antigravity Discord RPC",
     "publisher": "antigravity",
     "description": "Discord Rich Presence integration for Antigravity - Display your AI agent's real-time activity and tasks",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "author": {
         "name": "A-Gift-Of-Flame",
         "url": "https://github.com/A-Gift-Of-Flame"
@@ -43,9 +43,12 @@
     "activationEvents": [
         "onStartupFinished"
     ],
-    "main": "./extension.js",
+    "main": "./out/extension.js",
     "contributes": {},
     "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
         "package": "vsce package"
     },
     "dependencies": {
@@ -54,6 +57,7 @@
     "devDependencies": {
         "@types/node": "^18.0.0",
         "@types/vscode": "^1.90.0",
-        "@vscode/vsce": "^2.15.0"
+        "@vscode/vsce": "^2.15.0",
+        "typescript": "^5.0.0"
     }
 }

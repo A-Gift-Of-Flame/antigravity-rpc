@@ -1,22 +1,24 @@
-const vscode = require('vscode');
-const RPC = require('discord-rpc');
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+// discord-rpc doesn't have official types in the main package, so we use require
+const RPC = require('discord-rpc');
 
 const clientId = '1440730997460172810';
 const brainDir = path.join(os.homedir(), '.gemini', 'antigravity', 'brain');
-let client;
-let statusBarItem;
+
+let client: any;
+let statusBarItem: vscode.StatusBarItem;
 let agentStatus = '';
 let agentTaskName = '';
-let currentConversationId = null;
-let watchedTaskFile = null;
-let fileWatcher = null;
+let currentConversationId: string | null = null;
+let watchedTaskFile: string | null = null;
+let fileWatcher: boolean = false;
 let activityStartTime = Date.now();
 
-function activate(context) {
+export function activate(context: vscode.ExtensionContext) {
     console.log('Antigravity RPC is now active!');
 
     // Create status bar item
@@ -30,8 +32,8 @@ function activate(context) {
 
     // Register event listeners for activity updates
     context.subscriptions.push(
-        vscode.window.onDidChangeActiveTextEditor(updateActivity),
-        vscode.workspace.onDidChangeTextDocument(updateActivity)
+        vscode.window.onDidChangeActiveTextEditor(() => updateActivity()),
+        vscode.workspace.onDidChangeTextDocument(() => updateActivity())
     );
 
     // Watch for agent status changes
@@ -42,7 +44,7 @@ function watchAgentStatus() {
     // Initial check
     findActiveConversation();
 
-    // Poll for conversation changes every 2 seconds
+    // Poll for conversation changes every 3.33 seconds
     setInterval(() => {
         findActiveConversation();
     }, 3330);
@@ -72,7 +74,7 @@ function findActiveConversation() {
 
         // Find the most recently modified task.md
         let mostRecentTime = 0;
-        let mostRecentConversation = null;
+        let mostRecentConversation: string | null = null;
         const STALE_THRESHOLD = 5 * 60 * 1000; // 5 minutes
 
         conversationDirs.forEach(dir => {
@@ -138,27 +140,32 @@ function checkStatusFile() {
             return;
         }
 
-        // Parse task.md for the first "In Progress" item
+        // Parse task.md sequentially to find the context of the active task
         const lines = data.split('\n');
         let activeTask = '';
         let taskName = '';
 
-        // Look for the task name (first # heading)
-        for (const line of lines) {
-            if (line.startsWith('# ')) {
-                taskName = line.substring(2).trim();
-                break;
-            }
-        }
+        let currentMainHeader = '';
+        let currentSectionHeader = '';
 
-        // Look for active task (first [/] item)
         for (const line of lines) {
-            if (line.includes('[/]')) {
-                // Extract text between ] and <!-- or end of line
-                const match = line.match(/\[\/\]\s*(.*?)(?:<!--|$)/);
+            const trimmedLine = line.trim();
+
+            if (trimmedLine.startsWith('# ')) {
+                currentMainHeader = trimmedLine.substring(2).trim();
+                // Reset section header when a new main header is found
+                currentSectionHeader = '';
+            } else if (trimmedLine.startsWith('## ')) {
+                currentSectionHeader = trimmedLine.substring(3).trim();
+            } else if (trimmedLine.includes('[/]')) {
+                // Found the active task
+                const match = trimmedLine.match(/\[\/\]\s*(.*?)(?:<!--|$)/);
                 if (match && match[1]) {
                     activeTask = match[1].trim();
-                    break;
+
+                    // Use the most specific header available: Section > Main
+                    taskName = currentSectionHeader || currentMainHeader;
+                    break; // Stop after finding the first active task
                 }
             }
         }
@@ -256,10 +263,10 @@ function updateActivity() {
         smallImageKey,
         smallImageText,
         instance: false,
-    }).catch(err => console.error(err));
+    }).catch((err: any) => console.error(err));
 }
 
-function deactivate() {
+export function deactivate() {
     if (client) {
         client.destroy();
     }
@@ -267,8 +274,3 @@ function deactivate() {
         fs.unwatchFile(watchedTaskFile);
     }
 }
-
-module.exports = {
-    activate,
-    deactivate
-};
