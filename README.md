@@ -35,7 +35,7 @@ When you're editing:
 
 ### Manual Installation
 ```bash
-code --install-extension antigravity.antigravity-rpc
+antigravity --install-extension antigravity.antigravity-rpc
 ```
 
 ## Requirements
@@ -46,7 +46,7 @@ code --install-extension antigravity.antigravity-rpc
 ## How It Works
 
 The extension monitors your Antigravity brain directory to detect which conversation is currently active. It reads the `task.md` file from the most recently modified conversation to extract:
-- Task name (from the first `#` heading)
+- Task name (from the nearest `##` section heading above the active task, falling back to the `#` main heading)
 - Current activity (from the first `[/]` in-progress item)
 
 This information is then displayed in your Discord Rich Presence, updating in real-time as you work.

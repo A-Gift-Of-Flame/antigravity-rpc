@@ -127,6 +127,9 @@ function findActiveConversation() {
             });
 
             fileWatcher = true;
+        } else if (mostRecentConversation && mostRecentConversation === currentConversationId) {
+            // Same conversation — re-check the file on every poll so stale [/] tasks are cleared promptly
+            checkStatusFile();
         }
     });
 }
@@ -268,7 +271,7 @@ function updateActivity() {
 
 export function deactivate() {
     if (client) {
-        client.destroy();
+        client.clearActivity().catch(() => {}).finally(() => client.destroy());
     }
     if (watchedTaskFile) {
         fs.unwatchFile(watchedTaskFile);

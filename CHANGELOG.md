@@ -2,6 +2,28 @@
 
 All notable changes to the Antigravity Discord RPC extension will be documented in this file.
 
+## [0.0.14] - 2026-02-21
+
+### Fixed
+- Fixed Discord Rich Presence persisting after closing Antigravity — extension now clears activity before destroying the RPC client on deactivation
+- Fixed stale agent status lingering for up to 5 minutes after the agent goes idle — active conversation is now re-checked on every poll cycle (~3.33s) instead of only on file change events
+
+### Changed
+- README: corrected manual installation command from `code` to `antigravity`
+- README: corrected "How It Works" description to accurately reflect that task name uses the nearest `##` section heading, falling back to the `#` main heading
+
+## [0.0.13] - 2025-12-06
+
+### Fixed
+- Included CHANGELOG.md in the package (previously missing in 0.0.12)
+
+## [0.0.12] - 2025-12-06
+
+### Fixed
+- General stability improvements and version verification
+- CRITICAL: Fixed hardcoded user path. Now dynamically resolves the user's home directory using `os.homedir()`
+- Extension now works correctly for all users, not just the developer
+
 ## [0.0.11] - 2025-11-22
 
 ### Changed
